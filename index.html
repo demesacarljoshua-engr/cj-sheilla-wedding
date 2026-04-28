@@ -669,11 +669,6 @@ footer{background:var(--deep);text-align:center;padding:56px 24px;}
       </div>
       <div class="step-panel" id="sp-2" style="display:none;">
         <div class="step-head">Step 2 of 3 &mdash; Will you join us?</div>
-        <div id="guest-welcome" style="display:none;margin-bottom:20px;padding:14px 18px;background:rgba(197,213,197,0.25);border:1px solid rgba(197,213,197,0.6);border-radius:8px;">
-          <p style="font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:#b8845a;margin-bottom:4px;">Guest confirmed</p>
-          <p id="guest-welcome-name" style="font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:#2d1f1a;margin-bottom:2px;"></p>
-          <p id="guest-welcome-seats" style="font-size:0.82rem;color:#6b5c54;"></p>
-        </div>
         <p style="font-size:0.97rem;color:var(--muted);margin-bottom:24px;">Tap the button that applies.</p>
         <div class="big-choice-grp">
           <div class="big-choice" id="cy" onclick="selAtt('yes')"><div class="bc-icon">🎉</div><div class="bc-lbl">Yes, I&rsquo;ll be there!</div><div class="bc-sub">Joyfully accepts</div></div>
@@ -940,7 +935,7 @@ function findGuest(input) {
 
 var currentGuest = null;
 var cur = 1;
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfySTzGi3NZfSSlPF0V94FY8rbNpmZDvd1Oj4X0M89THDX-nmpuU_XPMpvgXX3c3eDNg/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd2iR65b6UNCzNmHvL8DEQNtyC8a6Ap-S0gjOixMfcOzQ4WXH5LxCyo9Vk2RS0NkBEJg/exec';
 
 function goS(n) {
   if (n === 2) {
@@ -974,19 +969,9 @@ function goS(n) {
 
 function updateSeatsDisplay(guest) {
   var s = guest.seats;
-  // Step 3 seats display
   document.getElementById('g-num').textContent = s;
   document.getElementById('seats-label').textContent = s === 1 ? 'seat reserved for you' : 'seats reserved for you';
   document.getElementById('seats-sub').textContent = 'Your reserved seat' + (s>1?'s are':' is') + ' confirmed on our guest list';
-  // Step 2 welcome banner
-  var banner = document.getElementById('guest-welcome');
-  if (banner) {
-    banner.style.display = 'block';
-    document.getElementById('guest-welcome-name').textContent = guest.name;
-    document.getElementById('guest-welcome-seats').textContent = s === 1
-      ? '1 seat reserved for you'
-      : s + ' seats reserved for you';
-  }
 }
 
 function showNameError(msg) {
@@ -1018,45 +1003,20 @@ function submitR() {
   var mobile = document.getElementById('r-phone').value.trim();
   var btn = document.querySelector('.sub-btn');
   btn.textContent='Sending...'; btn.disabled=true;
-
-  // Use GET with URL params — most reliable method for Google Apps Script from static HTML
-  var params = encodeURIComponent(JSON.stringify({
-    name: name,
-    mobile: mobile,
-    attending: att,
-    guests: seats,
-    timestamp: new Date().toISOString()
-  }));
-  var getUrl = SCRIPT_URL + '?data=' + params;
-
-  // Image trick: fires a GET to Apps Script without CORS issues
-  var img = new Image();
-  img.onload = img.onerror = function() { showConfirmation(name, seats, att); };
-  img.src = getUrl;
-
-  // Also fire the POST as backup (some Apps Scripts handle POST only)
-  try {
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({name:name, mobile:mobile, attending:att, guests:seats, timestamp:new Date().toISOString()})
-    });
-  } catch(e) {}
-
-  // Show confirmation after 2.5s regardless (no-cors means we cannot read response)
-  setTimeout(function() { showConfirmation(name, seats, att); }, 2500);
-}
-
-function showConfirmation(name, seats, att) {
-  if (document.getElementById('rsvp-ok').style.display === 'block') return; // already shown
-  document.getElementById('rsvp-wrap').style.display='none';
-  document.getElementById('rsvp-steps').style.display='none';
-  document.querySelector('.step-lbls').style.display='none';
-  document.getElementById('rsvp-ok').style.display='block';
-  document.getElementById('ok-msg').textContent = att==='yes'
-    ? 'We are thrilled to have you, '+name+'! We have noted '+seats+(seats>1?' seats':' seat')+' for you. See you December 22!'
-    : 'We will miss you, '+name+'! Thank you so much for letting us know.';
+  fetch(SCRIPT_URL, {
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name, mobile:mobile, attending:att, guests:seats, timestamp:new Date().toISOString()})
+  }).finally(function(){
+    document.getElementById('rsvp-wrap').style.display='none';
+    document.getElementById('rsvp-steps').style.display='none';
+    document.querySelector('.step-lbls').style.display='none';
+    document.getElementById('rsvp-ok').style.display='block';
+    document.getElementById('ok-msg').textContent = att==='yes'
+      ? 'We are thrilled to have you, '+name+'! We have noted '+seats+(seats>1?' seats':' seat')+' for you. See you December 22!'
+      : 'We will miss you, '+name+'! Thank you so much for letting us know.';
+  });
 }
 
 function tFaq(el){const it=el.parentElement;const op=it.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!op)it.classList.add('open');}
