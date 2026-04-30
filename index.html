@@ -1003,6 +1003,7 @@ function submitR() {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
+      Type: 'RSVP',
       Name: name,
       Attending: att,
       Seats: seats,
