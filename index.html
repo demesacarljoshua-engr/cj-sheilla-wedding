@@ -999,33 +999,19 @@ function submitR() {
   var btn = document.querySelector('.sub-btn');
   btn.textContent='Sending...'; btn.disabled=true;
 
-  // Use GET with URL params — most reliable method for Google Apps Script from static HTML
-  var params = encodeURIComponent(JSON.stringify({
-    name: name,
-    mobile: mobile,
-    attending: att,
-    guests: seats,
-    timestamp: new Date().toISOString()
-  }));
-  var getUrl = SCRIPT_URL + '?data=' + params;
-
-  // Image trick: fires a GET to Apps Script without CORS issues
-  var img = new Image();
-  img.onload = img.onerror = function() { showConfirmation(name, seats, att); };
-  img.src = getUrl;
-
-  // Also fire the POST as backup (some Apps Scripts handle POST only)
-  try {
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({name:name, mobile:mobile, attending:att, guests:seats, timestamp:new Date().toISOString()})
-    });
-  } catch(e) {}
-
-  // Show confirmation after 2.5s regardless (no-cors means we cannot read response)
-  setTimeout(function() { showConfirmation(name, seats, att); }, 2500);
+  fetch('https://api.sheetmonkey.io/form/3v9zHdUjFJrGDiG18TARQz', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      Name: name,
+      Attending: att,
+      Seats: seats,
+      Mobile: mobile,
+      Timestamp: new Date().toISOString()
+    })
+  })
+  .then(function() { showConfirmation(name, seats, att); })
+  .catch(function() { showConfirmation(name, seats, att); });
 }
 
 function showConfirmation(name, seats, att) {
@@ -1051,9 +1037,12 @@ function addS(){
   rSongs();
   inp.value='';
   inp.focus();
-  // Send to Google Sheet
-  var img=new Image();
-  img.src=SCRIPT_URL+'?action=song&song='+encodeURIComponent(v)+'&timestamp='+encodeURIComponent(new Date().toISOString());
+  // Send to SheetMonkey
+  fetch('https://api.sheetmonkey.io/form/3v9zHdUjFJrGDiG18TARQz', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({Type: 'Song', Song: v, Timestamp: new Date().toISOString()})
+  }).catch(function(){});
 }
 
 function rSongs(){
