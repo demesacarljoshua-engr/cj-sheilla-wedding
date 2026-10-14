@@ -1349,7 +1349,17 @@ section[data-lily]{position:relative;isolation:isolate;}
                 <div style="font-size:0.78rem;color:#6b5c54;margin-top:3px;" id="seats-sub">The couple will confirm your reserved seats</div>
               </div>
             </div>
-            
+
+          </div>
+          <div class="fg" id="ap-flds" style="display:none;">
+            <label class="lbl-big">You&rsquo;re also invited to our Afterparty</label>
+            <p style="font-size:0.92rem;color:var(--muted);margin-bottom:14px;line-height:1.6;">After the reception, we&rsquo;re moving the celebration to a separate venue in <strong style="color:var(--dark);font-weight:500;">Alabang</strong>. Will you join us there?</p>
+            <div class="big-choice-grp" style="margin-bottom:8px;">
+              <div class="big-choice" id="apy" onclick="selAp('yes')"><div class="bc-lbl">Count me in!</div><div class="bc-sub">See you at the afterparty</div></div>
+              <div class="big-choice" id="apn" onclick="selAp('no')"><div class="bc-lbl">I&rsquo;ll skip this one</div><div class="bc-sub">Reception only for me</div></div>
+            </div>
+            <input type="hidden" id="r-ap" value="">
+            <p id="ap-error" style="display:none;color:#b05040;font-size:0.82rem;margin-top:4px;">Please let us know if you&rsquo;ll join the afterparty.</p>
           </div>
           
           
@@ -1471,13 +1481,13 @@ document.addEventListener('DOMContentLoaded',function(){tick();setInterval(tick,
 
 let gl={};
 let maxG=5;
-// GUEST LIST - auto-synced from the 'Wedding Guest List' tab of the Google Sheet. Edit the sheet, not this list.
+// GUEST LIST - auto-synced from the 'Wedding Guest List' tab of the Google Sheet. Edit the sheet, not this list. ap:1 = invited to the afterparty.
 var GUEST_LIST = [
-  {name:'CJ',seats:1,keys:['cj']},
-  {name:'Sheilla',seats:1,keys:['sheilla']},
+  {name:'CJ',seats:1,keys:['cj'],ap:1},
+  {name:'Sheilla',seats:1,keys:['sheilla'],ap:1},
   {name:'Lorelee Evangelista',seats:1,keys:['lorelee evangelista','lorelee']},
-  {name:'Katherine De Mesa',seats:2,keys:['katherine de mesa','katherine']},
-  {name:'Nadine Evangelista',seats:2,keys:['nadine evangelista','nadine']},
+  {name:'Katherine De Mesa',seats:2,keys:['katherine de mesa','katherine'],ap:1},
+  {name:'Nadine Evangelista',seats:2,keys:['nadine evangelista','nadine'],ap:1},
   {name:'Isabel Evangelista',seats:1,keys:['isabel evangelista','isabel']},
   {name:'Ma. Jennifer De Leon',seats:1,keys:['ma. jennifer de leon','jennifer de leon','jennifer']},
   {name:'Romeo Evangelista',seats:2,keys:['romeo evangelista','romeo']},
@@ -1487,37 +1497,37 @@ var GUEST_LIST = [
   {name:'Tobi Garano',seats:1,keys:['tobi garano','tobi']},
   {name:'Brandon Regidor',seats:3,keys:['brandon regidor','brandon']},
   {name:'Zeny Raguinan',seats:1,keys:['zeny raguinan','zeny']},
-  {name:'MJ Vargas',seats:1,keys:['mj vargas','mj']},
-  {name:'Shaine Merjilla',seats:1,keys:['shaine merjilla','shaine']},
-  {name:'Janalei Alvarez',seats:1,keys:['janalei alvarez','janalei']},
-  {name:'Frelyn Baraoidan',seats:1,keys:['frelyn baraoidan','frelyn']},
-  {name:'Justine Ventura',seats:2,keys:['justine ventura','justine']},
-  {name:'Triscia Carino',seats:1,keys:['triscia carino','triscia']},
+  {name:'MJ Vargas',seats:1,keys:['mj vargas','mj'],ap:1},
+  {name:'Shaine Merjilla',seats:1,keys:['shaine merjilla','shaine'],ap:1},
+  {name:'Janalei Alvarez',seats:1,keys:['janalei alvarez','janalei'],ap:1},
+  {name:'Frelyn Baraoidan',seats:1,keys:['frelyn baraoidan','frelyn'],ap:1},
+  {name:'Justine Ventura',seats:2,keys:['justine ventura','justine'],ap:1},
+  {name:'Triscia Carino',seats:1,keys:['triscia carino','triscia'],ap:1},
   {name:'Merlyn Regidor',seats:1,keys:['merlyn regidor','merlyn']},
   {name:'Al Antay',seats:2,keys:['al antay']},
   {name:'Joy Ortal',seats:3,keys:['joy ortal','joy']},
   {name:'Marlowe Regidor',seats:2,keys:['marlowe regidor','marlowe']},
-  {name:'Herxel Fortunato',seats:2,keys:['herxel fortunato','herxel']},
-  {name:'Nathan Arroyo',seats:2,keys:['nathan arroyo','nathan']},
-  {name:'Elei Sulit',seats:2,keys:['elei sulit','elei']},
-  {name:'Marcus Festejo',seats:1,keys:['marcus festejo','marcus']},
-  {name:'Ron Lonzaga',seats:1,keys:['ron lonzaga']},
-  {name:'Daniel De Guzman',seats:1,keys:['daniel de guzman','daniel']},
-  {name:'Carlos Antonio',seats:1,keys:['carlos antonio','carlos']},
-  {name:'Lian Guerrero',seats:2,keys:['lian guerrero','lian']},
-  {name:'Kim Haw',seats:1,keys:['kim haw','kim']},
-  {name:'TJ Alimorong',seats:1,keys:['tj alimorong','tj']},
-  {name:'Abby Koga',seats:2,keys:['abby koga','abby']},
-  {name:'Mario Dizon',seats:2,keys:['mario dizon','mario']},
-  {name:'Franco Rivera',seats:2,keys:['franco rivera','franco']},
-  {name:'Raymond Marchan',seats:1,keys:['raymond marchan','raymond']},
-  {name:'Earl Arce',seats:2,keys:['earl arce','earl']},
-  {name:'Benjamin Cruz',seats:1,keys:['benjamin cruz','benjamin','ben cruz']},
-  {name:'Kaethe Pagdanganan',seats:2,keys:['kaethe pagdanganan','kaethe']},
-  {name:'Tyrone dela Paz',seats:2,keys:['tyrone dela paz','tyrone']},
-  {name:'Corinne Antimaro',seats:1,keys:['corinne antimaro','corinne']},
-  {name:'Jesse Alcid',seats:1,keys:['jesse alcid','jesse']},
-  {name:'Jeremiah San Pedro',seats:1,keys:['jeremiah san pedro','jeremiah']},
+  {name:'Herxel Fortunato',seats:2,keys:['herxel fortunato','herxel'],ap:1},
+  {name:'Nathan Arroyo',seats:2,keys:['nathan arroyo','nathan'],ap:1},
+  {name:'Elei Sulit',seats:2,keys:['elei sulit','elei'],ap:1},
+  {name:'Marcus Festejo',seats:1,keys:['marcus festejo','marcus'],ap:1},
+  {name:'Ron Lonzaga',seats:1,keys:['ron lonzaga'],ap:1},
+  {name:'Daniel De Guzman',seats:1,keys:['daniel de guzman','daniel'],ap:1},
+  {name:'Carlos Antonio',seats:1,keys:['carlos antonio','carlos'],ap:1},
+  {name:'Lian Guerrero',seats:2,keys:['lian guerrero','lian'],ap:1},
+  {name:'Kim Haw',seats:1,keys:['kim haw','kim'],ap:1},
+  {name:'TJ Alimorong',seats:1,keys:['tj alimorong','tj'],ap:1},
+  {name:'Abby Koga',seats:2,keys:['abby koga','abby'],ap:1},
+  {name:'Mario Dizon',seats:2,keys:['mario dizon','mario'],ap:1},
+  {name:'Franco Rivera',seats:2,keys:['franco rivera','franco'],ap:1},
+  {name:'Raymond Marchan',seats:1,keys:['raymond marchan','raymond'],ap:1},
+  {name:'Earl Arce',seats:2,keys:['earl arce','earl'],ap:1},
+  {name:'Benjamin Cruz',seats:1,keys:['benjamin cruz','benjamin','ben cruz'],ap:1},
+  {name:'Kaethe Pagdanganan',seats:2,keys:['kaethe pagdanganan','kaethe'],ap:1},
+  {name:'Tyrone dela Paz',seats:2,keys:['tyrone dela paz','tyrone'],ap:1},
+  {name:'Corinne Antimaro',seats:1,keys:['corinne antimaro','corinne'],ap:1},
+  {name:'Jesse Alcid',seats:1,keys:['jesse alcid','jesse'],ap:1},
+  {name:'Jeremiah San Pedro',seats:1,keys:['jeremiah san pedro','jeremiah'],ap:1},
   {name:'Roy Estanislao',seats:1,keys:['roy estanislao','roy']},
   {name:'Ma. Josephine Carpio',seats:4,keys:['ma. josephine carpio','josephine carpio','josephine']},
   {name:'Denny Mark Regidor',seats:1,keys:['denny mark regidor','denny mark','denny']},
@@ -1529,14 +1539,14 @@ var GUEST_LIST = [
   {name:'Dencio Regidor',seats:1,keys:['dencio regidor','dencio']},
   {name:'Perla Echipare',seats:2,keys:['perla echipare','perla']},
   {name:'Jun Echipare',seats:1,keys:['jun echipare','jun']},
-  {name:'Klein Nacion',seats:1,keys:['klein nacion','klen nacion','klein','klen']},
-  {name:'John Mark Rasay',seats:1,keys:['john mark rasay','john mark']},
-  {name:'Joshua Labaguis',seats:1,keys:['joshua labaguis','joshua']},
-  {name:'Melissa Pungtilan',seats:1,keys:['melissa pungtilan','melissa']},
-  {name:'Daisy Villarin',seats:1,keys:['daisy villarin','daisy']},
-  {name:'Janilah Baliza',seats:1,keys:['janilah baliza','janilah']},
-  {name:'April Aguinaldo',seats:1,keys:['april aguinaldo','april']},
-  {name:'Jomarie Tumaneng',seats:1,keys:['jomarie tumaneng','jomarie']},
+  {name:'Klein Nacion',seats:1,keys:['klein nacion','klen nacion','klein','klen'],ap:1},
+  {name:'John Mark Rasay',seats:1,keys:['john mark rasay','john mark'],ap:1},
+  {name:'Joshua Labaguis',seats:1,keys:['joshua labaguis','joshua'],ap:1},
+  {name:'Melissa Pungtilan',seats:1,keys:['melissa pungtilan','melissa'],ap:1},
+  {name:'Daisy Villarin',seats:1,keys:['daisy villarin','daisy'],ap:1},
+  {name:'Janilah Baliza',seats:1,keys:['janilah baliza','janilah'],ap:1},
+  {name:'April Aguinaldo',seats:1,keys:['april aguinaldo','april'],ap:1},
+  {name:'Jomarie Tumaneng',seats:1,keys:['jomarie tumaneng','jomarie'],ap:1},
   {name:'Ashley Regidor',seats:1,keys:['ashley regidor','ashley']},
   {name:'Eloisa Fulla',seats:2,keys:['eloisa fulla','eloisa']},
   {name:'Erwin Gaget',seats:1,keys:['erwin gaget','erwin']},
@@ -1554,9 +1564,9 @@ var GUEST_LIST = [
   {name:'Laura De Guzman',seats:1,keys:['laura de guzman','laura']},
   {name:'Sabina Regidor',seats:1,keys:['sabina regidor','sabina']},
   {name:'Rudolfo Regidor',seats:1,keys:['rudolfo regidor','rudolfo']},
-  {name:'Giovanni Fu',seats:2,keys:['giovanni fu','giovanni']},
+  {name:'Giovanni Fu',seats:2,keys:['giovanni fu','giovanni'],ap:1},
   {name:'Rebecca Andres',seats:2,keys:['rebecca andres','rebecca']},
-  {name:'Trina Basilio',seats:1,keys:['trina basilio','trina']}
+  {name:'Trina Basilio',seats:1,keys:['trina basilio','trina'],ap:1}
 ];
 
 function findGuest(input) {
@@ -1605,6 +1615,7 @@ function goS(n) {
       return;
     }
     clearNameError();
+    if (currentGuest !== guest) selAp('');
     currentGuest = guest;
     document.getElementById('r-name').value = guest.name;
     updateSeatsDisplay(guest);
@@ -1613,6 +1624,8 @@ function goS(n) {
     var att = document.getElementById('r-att').value;
     if (!att) return;
     document.getElementById('att-yes-flds').style.display = att==='yes' ? 'block' : 'none';
+    document.getElementById('ap-flds').style.display = apInvited(att) ? 'block' : 'none';
+    document.getElementById('ap-error').style.display = 'none';
     document.getElementById('s3-head').textContent = att==='yes' ? 'Step 3 of 3 - A few more details' : 'Step 3 of 3 - Almost done!';
   }
   document.getElementById('sp-'+cur).style.display='none';
@@ -1666,10 +1679,21 @@ function selAtt(v){
   document.getElementById('s2-next').disabled=false;
 }
 
+// Afterparty (Alabang): only asked of guests flagged ap:1 who are attending
+function apInvited(att){ return att==='yes' && !!(currentGuest && currentGuest.ap); }
+function selAp(v){
+  document.getElementById('r-ap').value=v;
+  document.getElementById('apy').className='big-choice'+(v==='yes'?' sel-yes':'');
+  document.getElementById('apn').className='big-choice'+(v==='no'?' sel-no':'');
+  document.getElementById('ap-error').style.display='none';
+}
+
 function submitR() {
   var name = currentGuest ? currentGuest.name : document.getElementById('r-name').value.trim();
   var seats = currentGuest ? currentGuest.seats : 1;
   var att = document.getElementById('r-att').value;
+  var ap = apInvited(att) ? document.getElementById('r-ap').value : '';
+  if (apInvited(att) && !ap) { document.getElementById('ap-error').style.display='block'; return; }
   var mobile = document.getElementById('r-phone').value.trim();
   var btn = document.querySelector('.sub-btn');
   btn.textContent='Sending...'; btn.disabled=true;
@@ -1683,14 +1707,15 @@ function submitR() {
       Attending: att,
       Seats: seats,
       Mobile: mobile,
-      Timestamp: new Date().toISOString()
+      Timestamp: new Date().toISOString(),
+      Afterparty: ap
     })
   })
-  .then(function() { showConfirmation(name, seats, att); })
-  .catch(function() { showConfirmation(name, seats, att); });
+  .then(function() { showConfirmation(name, seats, att, ap); })
+  .catch(function() { showConfirmation(name, seats, att, ap); });
 }
 
-function showConfirmation(name, seats, att) {
+function showConfirmation(name, seats, att, ap) {
   if (document.getElementById('rsvp-ok').style.display === 'block') return; // already shown
   document.getElementById('rsvp-wrap').style.display='none';
   document.getElementById('rsvp-steps').style.display='none';
@@ -1698,6 +1723,7 @@ function showConfirmation(name, seats, att) {
   document.getElementById('rsvp-ok').style.display='block';
   document.getElementById('ok-msg').textContent = att==='yes'
     ? 'We are thrilled to have you, '+name+'! We have noted '+seats+(seats>1?' seats':' seat')+' for you. See you December 22!'
+      + (ap==='yes' ? ' And see you at the afterparty in Alabang too!' : '')
     : 'We will miss you, '+name+'! Thank you so much for letting us know.';
 }
 
